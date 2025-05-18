@@ -51,7 +51,9 @@ jobs:
     - name: Export SonarQube issues to JSON
       shell: pwsh
       run: |
-        curl -u "$env:SONAR_TOKEN:" "$env:SONAR_HOST_URL/api/issues/search?componentKeys=first-try" -o sonar-issues.json
+        $auth = "${env:SONAR_TOKEN}:"
+        $url = "${env:SONAR_HOST_URL}/api/issues/search?componentKeys=first-try"
+        curl -u $auth $url -o sonar-issues.json
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
