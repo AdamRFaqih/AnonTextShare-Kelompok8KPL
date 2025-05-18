@@ -1,0 +1,45 @@
+name: SonarQube Analysis for C#
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    name: Build and Analyze
+    runs-on: windows-latest  # Required for .NET projects
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '7.0.x'  # or your version
+
+    - name: Install SonarScanner for .NET
+      run: dotnet tool install --global dotnet-sonarscanner
+
+    - name: Add dotnet tools to PATH
+      run: echo "${HOME}/.dotnet/tools" >> $GITHUB_PATH
+
+    - name: Begin SonarQube analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      run: >
+        dotnet-sonarscanner begin 
+        /k:"my-csharp-project" 
+        /d:sonar.host.url="${{ env.SONAR_HOST_URL }}" 
+        /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
+    - name: Build solution
+      run: dotnet build --no-incremental
+
+    - name: End SonarQube analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
