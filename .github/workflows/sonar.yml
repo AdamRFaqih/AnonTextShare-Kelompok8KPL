@@ -19,7 +19,11 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '7.0.x'  # or your version
-
+    - name: Set up Java 17 for SonarScanner
+      uses: actions/setup-java@v4
+      with:
+          distribution: 'temurin'
+          java-version: '17'
     - name: Install SonarScanner for .NET
       run: dotnet tool install --global dotnet-sonarscanner
 
