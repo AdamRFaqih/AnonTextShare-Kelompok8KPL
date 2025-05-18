@@ -49,12 +49,13 @@ jobs:
       run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
   
     - name: Export SonarQube issues to JSON
+      shell: pwsh
+      run: |
+        curl -u "$env:SONAR_TOKEN:" "$env:SONAR_HOST_URL/api/issues/search?componentKeys=first-try" -o sonar-issues.json
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      run: |
-        curl -u "${SONAR_TOKEN}:" "${SONAR_HOST_URL}/api/issues/search?componentKeys=first-try" -o sonar-issues.json
-
+        
     - name: Upload issues JSON as artifact
       uses: actions/upload-artifact@v4
       with:
