@@ -55,7 +55,7 @@ jobs:
         $bytes = [System.Text.Encoding]::UTF8.GetBytes($auth)
         $encodedAuth = [Convert]::ToBase64String($bytes)
         $headers = @{ Authorization = "Basic $encodedAuth" }
-        $url = "${env:SONAR_HOST_URL}/api/issues/search?componentKeys=first-try"
+        $url = "${env:SONAR_HOST_URL}/api/issues/search?componentKeys=first-try&resolved=false"
         Invoke-RestMethod -Uri $url -Headers $headers -OutFile "sonar-issues.json"
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
